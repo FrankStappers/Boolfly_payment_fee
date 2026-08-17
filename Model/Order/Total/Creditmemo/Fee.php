@@ -35,13 +35,14 @@ class Fee extends AbstractTotal
         $baseFeeAmountInvoiced = $order->getBaseFeeAmountInvoiced();
 
         // Nothing to refound
-        if ((int)$feeAmountInvoiced === 0) {
+        // Rounded to the column's 4 dp instead of (int), which truncated any fee below 1.00 to zero.
+        if (round((float)$feeAmountInvoiced, 4) === 0.0) {
             return $this;
         }
 
         // Check if refound has already been done
         $feeAmountRefunded = $order->getFeeAmountRefunded();
-        if ((int)$feeAmountRefunded === 0) {
+        if (round((float)$feeAmountRefunded, 4) === 0.0) {
             $creditmemo->setGrandTotal($creditmemo->getGrandTotal() + $feeAmountInvoiced);
             $creditmemo->setBaseGrandTotal($creditmemo->getBaseGrandTotal() + $baseFeeAmountInvoiced);
             $creditmemo->setFeeAmount($feeAmountInvoiced);
